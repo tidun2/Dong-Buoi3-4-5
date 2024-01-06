@@ -1,0 +1,1 @@
+bannedWords = ["lon", "cac", "cu"]

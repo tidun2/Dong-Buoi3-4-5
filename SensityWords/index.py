@@ -1,6 +1,7 @@
 import customtkinter
 import os
 from utils import *
+from constants import *
 
 
 class FrameScrollBar(customtkinter.CTkScrollableFrame):
@@ -15,12 +16,18 @@ class FrameScrollBar(customtkinter.CTkScrollableFrame):
             if i < len(self.text_widgets):
                 self.text_widgets[i].configure(text=item)
             else:
-                print('item:', item)
-                label = customtkinter.CTkLabel(self, text=item, height=50)
+                itemHeight = 80
+
+                frame = customtkinter.CTkFrame(self)
+                frame.pack(anchor="e")
+
+                label = customtkinter.CTkLabel(
+                    frame, text=item)
                 label.pack(side="left")
-                imageLabel = FrameImage(master=self)
-                imageLabel.pack(side="right")
                 self.text_widgets.append(label)
+
+                imageLabel = FrameImage(master=frame, height=itemHeight)
+                imageLabel.pack(side="right")
 
 
 class App(customtkinter.CTk):
@@ -34,6 +41,10 @@ class App(customtkinter.CTk):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
         self.resizable(width=resizable, height=resizable)
+
+        # set frameScroll
+        self.frame_scrollbar = FrameScrollBar(self, self.inputTxts)
+        self.frame_scrollbar.pack(expand=True, fill="both")
         # input
         entry = customtkinter.CTkEntry(self, width=200)
         entry.pack(pady=10)
@@ -41,14 +52,9 @@ class App(customtkinter.CTk):
         button = customtkinter.CTkButton(
             self, text="Send", command=lambda entry=entry: self.getInputText(entry))
         button.pack(pady=10)
-
         # bind Enter key
         self.bind('<Return>', lambda event,
                   entry=entry: self.getInputText(entry))
-
-        # set frameScroll
-        self.frame_scrollbar = FrameScrollBar(self, self.inputTxts)
-        self.frame_scrollbar.pack(expand=True, fill="both")
 
     def getInputText(self, entry):
         user_input = entry.get()
@@ -59,15 +65,18 @@ class App(customtkinter.CTk):
 
 
 class FrameImage(customtkinter.CTkFrame):
-    def __init__(self, master):
+    def __init__(self, master, height):
         super().__init__(master)
         image_folder = 'img'
-        image_path = os.path.join(image_folder, "avatar.jpg")
-        rounded_image = add_border_radius(image_path, 500)
+        # SensityWords\img\avatar.jpg
+        image_path = os.path.join(image_folder, "avatar.jpeg")
+        rounded_image = add_border_radius(image_path, 50)
+
         avatar = customtkinter.CTkImage(light_image=rounded_image,
                                         dark_image=rounded_image,
-                                        size=(30, 30))
-        customtkinter.CTkLabel(self, image=avatar, text='')
+                                        size=(height, height))
+        label = customtkinter.CTkLabel(self, image=avatar, text='')
+        label.pack()
 
 
 app = App()

@@ -10,3 +10,5 @@ def add_border_radius(image_path, radius):
     result = ImageOps.fit(image, mask.size, centering=(0.5, 0.5))
     result.putalpha(mask)
     return result
+
+
