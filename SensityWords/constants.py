@@ -1,1 +1,1 @@
-bannedWords = ["lon", "cac", "cu"]
+bannedWords = ["the", "a", "there", "anaswe", "any", "by", "their"]

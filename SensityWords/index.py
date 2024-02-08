@@ -2,6 +2,7 @@ import customtkinter
 import os
 from utils import *
 from constants import *
+from Trie import *
 
 
 class FrameScrollBar(customtkinter.CTkScrollableFrame):
@@ -35,7 +36,7 @@ class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
         resizable = False
-        self.inputTxts = []
+        self.inputArr = []
         self.title("Đông Sun")
         self.geometry("500x800")
         self.grid_columnconfigure(0, weight=1)
@@ -43,7 +44,7 @@ class App(customtkinter.CTk):
         self.resizable(width=resizable, height=resizable)
 
         # set frameScroll
-        self.frame_scrollbar = FrameScrollBar(self, self.inputTxts)
+        self.frame_scrollbar = FrameScrollBar(self, self.inputArr)
         self.frame_scrollbar.pack(expand=True, fill="both")
         # input
         entry = customtkinter.CTkEntry(self, width=200)
@@ -57,11 +58,23 @@ class App(customtkinter.CTk):
                   entry=entry: self.getInputText(entry))
 
     def getInputText(self, entry):
-        user_input = entry.get()
-        self.inputTxts.append(user_input)
+        userWords = entry.get().split()
+        newUserWords = []
+        for word in userWords:
+            isBanned = tree.search(word)
+            # nếu có chữ trùng thì replace chữ đó thành ...
+            if isBanned:
+                newUserWords.append('***')
+            else:
+                newUserWords.append(word)
+        sentence = " ".join(newUserWords)
+
+        self.inputArr.append(sentence)
         entry.delete(0, "end")
+        # validation words
+
         self.frame_scrollbar.display_input_texts()
-        print('inputTxts: ', self.inputTxts)
+        print('inputTxts: ', self.inputArr)
 
 
 class FrameImage(customtkinter.CTkFrame):
@@ -80,4 +93,7 @@ class FrameImage(customtkinter.CTkFrame):
 
 
 app = App()
+tree = Trie()
+for word in bannedWords:
+    tree.insert(word)
 app.mainloop()
